@@ -54,7 +54,7 @@ class BluetoothOffScreen extends StatelessWidget {
               'Bluetooth Adapter is ${state != null ? state.toString().substring(15) : 'not available'}.',
               style: Theme.of(context)
                   .primaryTextTheme
-                  .subhead
+                  .bodySmall
                   ?.copyWith(color: Colors.white),
             ),
           ],
@@ -64,6 +64,9 @@ class BluetoothOffScreen extends StatelessWidget {
   }
 }
 
+const String serviceUuid = '0000ffe0-0000-1000-8000-00805f9b34fb';
+const String anotherUuid = '0000fff0-0000-1000-8000-00805f9b34fb';
+
 class FindDevicesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -72,8 +75,13 @@ class FindDevicesScreen extends StatelessWidget {
         title: Text('Find Devices'),
       ),
       body: RefreshIndicator(
-        onRefresh: () =>
-            FlutterBlue.instance.startScan(timeout: Duration(seconds: 4)),
+        onRefresh: () => FlutterBlue.instance.startScan(
+          timeout: Duration(seconds: 4),
+          withServices: [
+            Guid(serviceUuid),
+            Guid(anotherUuid),
+          ],
+        ),
         child: SingleChildScrollView(
           child: Column(
             children: <Widget>[
@@ -92,7 +100,7 @@ class FindDevicesScreen extends StatelessWidget {
                               builder: (c, snapshot) {
                                 if (snapshot.data ==
                                     BluetoothDeviceState.connected) {
-                                  return RaisedButton(
+                                  return ElevatedButton(
                                     child: Text('OPEN'),
                                     onPressed: () => Navigator.of(context).push(
                                         MaterialPageRoute(
@@ -227,7 +235,7 @@ class DeviceScreen extends StatelessWidget {
                   text = snapshot.data.toString().substring(21).toUpperCase();
                   break;
               }
-              return FlatButton(
+              return TextButton(
                   onPressed: onPressed,
                   child: Text(
                     text,
